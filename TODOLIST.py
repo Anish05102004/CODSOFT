@@ -39,7 +39,6 @@ def clear_list():
     task_listbox.delete(0, 'end')  
   
 def close():    
-    print(tasks)   
     guiWindow.destroy()  
     
 def retrieve_database():    
@@ -47,10 +46,10 @@ def retrieve_database():
         tasks.pop()    
     for row in the_cursor.execute('select title from tasks'):    
         tasks.append(row[0])  
-   
+
 if __name__ == "__main__":   
     guiWindow = Tk()   
-    guiWindow.title("To-Do List ")  
+    guiWindow.title("To-Do List")  
     guiWindow.geometry("665x400+550+250")   
     guiWindow.resizable(0, 0)  
     guiWindow.configure(bg = "#B5E5CF")  
@@ -62,72 +61,48 @@ if __name__ == "__main__":
     tasks = []  
         
     functions_frame = Frame(guiWindow, bg = "#8EE5EE") 
-    
     functions_frame.pack(side = "top", expand = True, fill = "both")  
  
-    task_label = Label( functions_frame,text = "TO-DO-LIST \n Enter the Task Title:",  
+    task_label = Label(functions_frame, text = "TO-DO-LIST \n Enter the Task Title:",  
         font = ("arial", "14", "bold"),  
         background = "#8EE5EE", 
-        foreground="#FF6103"
+        foreground = "#FF6103"
     )    
     task_label.place(x = 20, y = 30)  
         
-    task_field = Entry(  
-        functions_frame,  
-        font = ("Arial", "14"),  
-        width = 42,  
-        foreground="black",
-        background = "white",  
-    )    
+    task_field = Entry(functions_frame, font = ("Arial", "14"), width = 42, foreground="black", background = "white")    
     task_field.place(x = 180, y = 30)  
     
-    add_button =Button(  
-        functions_frame,  
-        text = "Add",  
-        width = 15,
-        bg='#D4AC0D',font=("arial", "14", "bold"),
-        command = add_task,
-        
-    )  
-    del_button = Button(  
-        functions_frame,  
-        text = "Remove",  
-        width = 15,
-        bg='#D4AC0D', font=("arial", "14", "bold"),
-        command = delete_task,  
-    )  
-    del_all_button = Button(  
-        functions_frame,  
-        text = "Delete All",  
-        width = 15,
-        font=("arial", "14", "bold"),
-        bg='#D4AC0D',
-        command = delete_all_tasks  
-    )
-    
-    exit_button = Button(  
-        functions_frame,  
-        text = "Exit / Close",  
-        width = 52,
-        bg='#D4AC0D',  font=("arial", "14", "bold"),
-        command = close  
-    )    
-    add_button.place(x = 18, y = 80,)  
+    add_button = Button(functions_frame, text = "Add", width = 15, bg='#D4AC0D', font=("arial", "14", "bold"), command = add_task)  
+    del_button = Button(functions_frame, text = "Remove", width = 15, bg='#D4AC0D', font=("arial", "14", "bold"), command = delete_task)  
+    del_all_button = Button(functions_frame, text = "Delete All", width = 15, bg='#D4AC0D', font=("arial", "14", "bold"), command = delete_all_tasks)
+    exit_button = Button(functions_frame, text = "Exit / Close", width = 52, bg='#D4AC0D', font=("arial", "14", "bold"), command = close)    
+  
+    add_button.place(x = 18, y = 80)  
     del_button.place(x = 240, y = 80)  
     del_all_button.place(x = 460, y = 80)  
     exit_button.place(x = 17, y = 330)  
     
-    task_listbox = Listbox(  
-        functions_frame,  
-        width = 70,  
-        height = 9,  
-        font="bold",
-        selectmode = 'SINGLE',  
-        background = "WHITE",
-        foreground="BLACK",    
-        selectbackground = "#FF8C00",  
-        selectforeground="BLACK"
-    )    
+    task_listbox = Listbox(functions_frame, width = 70, height = 9, font="bold", selectmode = 'SINGLE', background = "WHITE", foreground="BLACK", selectbackground = "#FF8C00", selectforeground="BLACK")    
+    task_listbox.place(x = 17, y = 140)  
+
+    # Add hover effect to buttons
+    def on_enter(e, btn):
+        btn.config(background='#673AB7', foreground='#FFFFFF')
+
+    def on_leave(e, btn):
+        btn.config(background='#D4AC0D', foreground='#FFFFFF')
+
+    for button in [add_button, del_button, del_all_button, exit_button]:
+        button.bind("<Enter>", lambda e, btn=button: on_enter(e, btn))
+        button.bind("<Leave>", lambda e, btn=button: on_leave(e, btn))
+
+    retrieve_database()  
+    list_update()    
+    guiWindow.mainloop()    
+    the_connection.commit()  
+    the_cursor.close()
+  
     task_listbox.place(x = 17, y = 140)  
     
     retrieve_database()  
